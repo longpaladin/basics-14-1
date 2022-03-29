@@ -105,8 +105,8 @@ var hawkerFoodOmakaseMain = function (input) {
     while (randomDish1 == randomDish2) {
       randomDish2 = Math.floor(Math.random() * noodleList.length);
     }
-    randomlyGeneratedList.push(riceList[randomDish1]);
-    randomlyGeneratedList.push(riceList[randomDish2]);
+    randomlyGeneratedList.push(noodleList[randomDish1]);
+    randomlyGeneratedList.push(noodleList[randomDish2]);
     completeOutput += `The first dish is ${randomlyGeneratedList[0]}<br>And the second dish is ${randomlyGeneratedList[1]}<br>`;
   } else {
     return "This BASE does not exist sorry!";
