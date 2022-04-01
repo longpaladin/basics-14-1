@@ -94,5 +94,3 @@ var redModeMain = function (input) {
   var myOutputValue = "hello world";
   return myOutputValue;
 };
-
-//scissors paper stone game
