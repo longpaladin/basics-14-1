@@ -54,7 +54,7 @@ var main = function (input) {
   if (input != "scissors" && input != "paper" && input != "stone") {
     return "Invalid input! Try again!";
   } else {
-    // game starts here
+    // game starts here, get computer choice
     player = input;
     computer = Math.floor(Math.random() * 3);
     if (computer == 0) {
