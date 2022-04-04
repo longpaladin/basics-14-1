@@ -21,7 +21,7 @@
 //   return myOutputValue;
 // };
 
-//scissors paper stone game
+//scissors paper stone game version 1
 var playerWinCount = 0;
 var computerWinCount = 0;
 var player;
