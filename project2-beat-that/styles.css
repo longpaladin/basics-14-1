@@ -181,3 +181,7 @@ hr {
 .justify-content-center {
   justify-content: center;
 }
+
+#instructions {
+  text-align: center;
+}
