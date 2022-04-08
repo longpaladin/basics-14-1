@@ -40,8 +40,6 @@ var madLibsAdjectivesMain = function (input) {
 
 var madLibsInputCreateMain = function (input) {
   // Complete the Comfortable: Input and Create Mode exercise below with madLibsInputCreateMain as the main function.
-  var myOutputValue = "hello world";
-  return myOutputValue;
 };
 
 var madLibsMultipleWordsMain = function (input) {
