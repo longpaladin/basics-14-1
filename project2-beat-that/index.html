@@ -64,19 +64,26 @@ The <html> element is known as the root element of a HTML page. All other elemen
     <!-- The <div> tag defines a division or a section in an HTML document, and is commonly use as a "container" for nested HTML elements. -->
     <div class="container">
       <!-- The <p> tag defines a paragraph element. -->
-      <p>Input:</p>
+      <!-- <p>Input:</p> -->
       <!-- The self-closing <input /> tag represents a field for a user to enter input. -->
-      <input id="input-field" />
+      <input id="input-field" style="display: none;" />
       <!-- The self-closing <br /> tag represents a line break - a line's worth of spacing before dispalying the next element. -->
       <br />
       <!-- The <button> tag represents.. you guessed it! a button. -->
-      <button id="submit-button">Roll Dice!</button>
-      <p>Output:</p>
+
+      <div id="submitbuttoncontainer">
+        <button id="submit-button">Roll Dice!</button>
+      </div>
+      <!-- <p>Output:</p> -->
       <div class="output-div" id="output-div"></div>
     </div>
 
     <!-- Instructions on how to play the dice game -->
     <div id="instructions">
+      <h2>
+        <b><u>How to play!</u></b>
+      </h2>
+      <p><b>TURN ON YOUR COMPUTER SOUND!!!</b></p>
       <p>Just keep clicking on the "Roll Dice!" button!</p>
       <p>Player 1 will play, followed by player 2</p>
       <p>Followed by the scoreboard!</p>

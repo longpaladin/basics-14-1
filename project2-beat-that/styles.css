@@ -63,6 +63,7 @@ nav ul li a {
   padding: 38px 31px;
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  position: relative;
 }
 
 input {
@@ -184,4 +185,13 @@ hr {
 
 #instructions {
   text-align: center;
+}
+
+#submitbuttoncontainer {
+  margin: 0;
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }

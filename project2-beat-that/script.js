@@ -76,6 +76,9 @@ var main = function (input) {
 };
 
 const btn = document.getElementsByClassName("container")[0];
+const submitbtn = document.getElementById("submit-button");
+var rollDiceSound = new Audio("wuerfelbecher.wav");
+var cheerSound = new Audio("crowdcheer.wav");
 
 let index = 0;
 
@@ -84,4 +87,18 @@ const colors = ["red", "orange", "yellow", "green", "blue", "violet", "purple"];
 btn.addEventListener("click", function onClick() {
   btn.style.backgroundColor = colors[index];
   index = Math.floor(Math.random() * colors.length);
+
+  if (playerTurn === "Player2") {
+    rollDiceSound.currentTime = 0;
+    rollDiceSound.play();
+    submitbtn.innerHTML = "Show scoreboard!";
+  } else if (playerTurn === "Summary") {
+    cheerSound.currentTime = 0;
+    cheerSound.play();
+    submitbtn.innerHTML = "Roll Dice for Player 1!";
+  } else if (playerTurn === "Player1") {
+    rollDiceSound.currentTime = 0;
+    rollDiceSound.play();
+    submitbtn.innerHTML = "Roll Dice for Player 2!";
+  }
 });
