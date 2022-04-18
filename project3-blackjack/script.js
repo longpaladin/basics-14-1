@@ -1,22 +1,7 @@
 var deck = [];
 var card = {};
 const values = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
-const suits = ["spade ♠️", "club ♣️", "heart ♥️", "diamond ♦️"];
-const ranks = [
-  "A",
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-  "10",
-  "J",
-  "Q",
-  "K"
-];
+const suits = ["Spade ♠️", "Club ♣️", "Heart ♥️", "Diamond ♦️"];
 const names = [
   "Ace",
   "2",
@@ -43,13 +28,13 @@ var playerHandTotalValue = 0;
 var playerCurrentHandMessage = "";
 var dealerHandTotalValue = 0;
 var dealerCurrentHandMessage = "";
+var playerChoice = "";
 
 //generate deck function
 var generateDeck = function () {
   for (let i = 0; i < suits.length; i += 1) {
-    for (let j = 0; j < ranks.length; j += 1) {
+    for (let j = 0; j < values.length; j += 1) {
       card.suit = suits[i];
-      card.rank = ranks[j];
       card.name = names[j];
       card.value = values[j];
       deck.push(card);
@@ -70,37 +55,180 @@ var shuffleDeck = function (numberOfCards) {
   }
 };
 
+//display dealer or player hand function
+var displayHand = function (person, hand) {
+  var message = `${person}'s hand:<br><br>`;
+  for (let i = 0; i < hand.length; i += 1) {
+    message += `${hand[i].name} of ${hand[i].suit}<br>`;
+  }
+  message += "<br><br>";
+  return message;
+};
+
+//calculate dealer or player hand value. A is 1 or 11. IF you have 2 aces, only one of it is 11. IF ace is 1 makes value < 21, then do it!
+var calculateHandValue = function (hand) {
+  let totalValue = 0;
+  let numberOfAce = 0;
+  for (let i = 0; i < hand.length; i += 1) {
+    totalValue += hand[i].value;
+    if (hand[i].value === 11) {
+      numberOfAce += 1;
+    }
+  }
+  if (numberOfAce > 1) {
+    let numberOfAceAdjustment = (numberOfAce - 1) * 10;
+    totalValue -= numberOfAceAdjustment;
+    if (totalValue - 10 <= 21) {
+      totalValue -= 10;
+    }
+  }
+  return totalValue;
+};
+
+var probability = function (remainingDeck) {
+  var cardsCounter = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  for (let i = 0; i < remainingDeck.length; i += 1) {
+    switch (remainingDeck[i].name) {
+      case "Ace":
+        cardsCounter[0] += 1;
+        break;
+      case "2":
+        cardsCounter[1] += 1;
+        break;
+      case "3":
+        cardsCounter[2] += 1;
+        break;
+      case "4":
+        cardsCounter[3] += 1;
+        break;
+      case "5":
+        cardsCounter[4] += 1;
+        break;
+      case "6":
+        cardsCounter[5] += 1;
+        break;
+      case "7":
+        cardsCounter[6] += 1;
+        break;
+      case "8":
+        cardsCounter[7] += 1;
+        break;
+      case "9":
+        cardsCounter[8] += 1;
+        break;
+      case "10":
+        cardsCounter[9] += 1;
+        break;
+      case "Jack":
+        cardsCounter[10] += 1;
+        break;
+      case "Queen":
+        cardsCounter[11] += 1;
+        break;
+      case "King":
+        cardsCounter[12] += 1;
+        break;
+      default:
+        break;
+    }
+  }
+  var probMessage =
+    "Probability of getting each of the cards remaining in deck:<br><br>";
+
+  for (let j = 0; j < cardsCounter.length; j += 1) {
+    var cardProbability = (cardsCounter[j] / remainingDeck.length) * 100;
+    probMessage += `${names[j]}: ${cardProbability.toFixed(2)}%<br>`;
+  }
+
+  return probMessage;
+};
+
+//code below this line is for DOM manipulation
+var buttonsContainer = document.getElementById("buttons-container");
+var mainButton = document.getElementById("submit-button");
+mainButton.style.display = "block";
+var hitButton = document.createElement("button");
+hitButton.innerHTML = "Hit!";
+var standButton = document.createElement("button");
+standButton.innerHTML = "Stand!";
+
+var hitButtonClick = function () {
+  playerChoice = "h";
+  var input = document.querySelector("#input-field");
+  // Store the output of main() in a new variable
+  var result = main();
+
+  // Display result in output element
+  var output = document.querySelector("#output-div");
+  output.innerHTML = result;
+};
+
+var standButtonClick = function () {
+  playerChoice = "s";
+  var input = document.querySelector("#input-field");
+  // Store the output of main() in a new variable
+  var result = main();
+
+  // Display result in output element
+  var output = document.querySelector("#output-div");
+  output.innerHTML = result;
+};
+
+hitButton.addEventListener("mouseover", () => {
+  hitButton.innerHTML = "You sure won't BUST???";
+});
+hitButton.addEventListener("mouseout", () => {
+  hitButton.innerHTML = "Hit!";
+});
+hitButton.addEventListener("click", hitButtonClick);
+standButton.addEventListener("mouseover", () => {
+  standButton.innerHTML = "Low risk! Wise choice! Or is it???";
+});
+standButton.addEventListener("mouseout", () => {
+  standButton.innerHTML = "Stand!";
+});
+standButton.addEventListener("click", standButtonClick);
+
+if (gameMode === "start") {
+  mainButton.innerHTML = "Start Game!";
+}
+
+//this is the main blackjackgame
 var main = function (input) {
   console.log(gameMode);
   // start round, generate deck and shuffle it
   if (gameMode === "start") {
+    playerChoice = "";
+    deck = [];
     generateDeck();
     shuffleDeck(deck.length);
     dealerHand = [];
     playerHand = [];
     gameMode = "placebet";
+    mainButton.innerHTML = "Bet!";
+    return `Deck has been created.<br><br>Dealer: $${dealerMoney}<br>Player: $${playerMoney}<br><br>Enter an amount to bet! Cannot be empty! It must be rounded off to the nearest dollar with no cents!`;
   }
 
   // players place bet
   if (gameMode === "placebet") {
-    gameMode = "betplaced";
-    return `Deck has been created.<br><br>Dealer: $${dealerMoney}<br>Player: $${playerMoney}<br><br>Enter an amount to bet! It must be rounded off to the nearest dollar with no cents!`;
-  }
-
-  if (gameMode === "betplaced") {
     if (
       Number.isNaN(input) ||
       Number(input) !== Math.trunc(Number(input)) ||
       input === "" ||
       Number(input) > playerMoney
     ) {
-      return "Number is Not a number or it has cents! Please input ONLY numbers and nearest dollar value!";
+      return "There is no input, or input is not a number or it has cents! Please input ONLY whole numbers!";
     } else {
-      playerBetThisRound = Number(input);
-      playerMoney -= playerBetThisRound;
-      gameMode = "dealcards";
-      return `Dealer: $${dealerMoney}<br>Player: $${playerMoney}<br><br>You have placed $${playerBetThisRound} as bet this round!`;
+      gameMode = "betplaced";
     }
+  }
+
+  if (gameMode === "betplaced") {
+    playerBetThisRound = Number(input);
+    playerMoney -= playerBetThisRound;
+    gameMode = "dealcards";
+    mainButton.innerHTML = "Deal Cards!";
+    return `Dealer: $${dealerMoney}<br>Player: $${playerMoney}<br><br>You have placed $${playerBetThisRound} as bet this round!`;
   }
 
   // dealer gives 1st & 2nd card to each person, facing up except dealer's 2nd card
@@ -112,157 +240,138 @@ var main = function (input) {
 
     // if player total 21, automatically win 1.5 times of bet amount and end round
     if (playerHand[0].value + playerHand[1].value === 21) {
+      dealerCurrentHandMessage = displayHand("Dealer", dealerHand);
+      playerCurrentHandMessage = displayHand("Player", playerHand);
       playerMoney += playerBetThisRound * 2.5;
       dealerMoney -= playerBetThisRound * 1.5;
       gameMode = "start";
-      return `Player's hand:<br><br>1st card: ${playerHand[0].name} of ${
+      return `Player's hand:<br><br>${playerHand[0].name} of ${
         playerHand[0].suit
-      }<br>2nd card: ${playerHand[1].name} of ${
+      }<br>${playerHand[1].name} of ${
         playerHand[1].suit
       }<br><br>Blackjack! You have won $${(playerBetThisRound * 1.5).toFixed(
         2
       )}`;
     } else {
       gameMode = "hitorstand";
-      return `Dealer's hand:<br><br>1st card: ${dealerHand[0].name} of ${dealerHand[0].suit}<br>2nd card: <b>SECRET!!!</b> <br><br>Player's hand:<br><br>1st card: ${playerHand[0].name} of ${playerHand[0].suit}<br>2nd card: ${playerHand[1].name} of ${playerHand[1].suit}<br><br>Choose 'hit' or 'stand'`;
+      mainButton.style.display = "none";
+      buttonsContainer.appendChild(hitButton);
+      buttonsContainer.appendChild(standButton);
+      return `Dealer's hand:<br><br> ${dealerHand[0].name} of ${
+        dealerHand[0].suit
+      }<br><b>SECRET!!!</b>(but you can find out using hint below)<br><br>Player's hand:<br><br>${
+        playerHand[0].name
+      } of ${playerHand[0].suit}<br>${playerHand[1].name} of ${
+        playerHand[1].suit
+      }<br><br>${probability(deck)}<br>Choose 'h' for 'hit' or 's' for 'stand'`;
     }
   }
 
   if (gameMode === "hitorstand") {
-    // check for invalid input
-    console.log(input.toLowerCase());
-    if (input.toLowerCase() === "hit") {
+    if (playerChoice === "h") {
       gameMode = "hit";
-    } else if (input.toLowerCase() === "stand") {
+    } else if (playerChoice === "s") {
       gameMode = "stand";
+      buttonsContainer.removeChild(hitButton);
+      buttonsContainer.removeChild(standButton);
+      mainButton.style.display = "block";
+      mainButton.innerHTML = "Revealed! Start again!";
     } else {
-      return "Invalid input! Make sure you type in 'hit' or 'stand' ONLY!";
+      return "Invalid input! Make sure you type in 'h' or 's' ONLY!";
     }
   }
 
   //if player enters 'hit', add card
   if (gameMode === "hit") {
-    if (input.toLowerCase() === "stand") {
+    if (playerChoice === "s") {
       gameMode = "stand";
+      buttonsContainer.removeChild(hitButton);
+      buttonsContainer.removeChild(standButton);
+      mainButton.style.display = "block";
+      mainButton.innerHTML = "Reveal cards!";
       return "Player has chosen 'stand'!";
     }
     playerHand.push(deck.pop());
-    console.log(playerHand);
-    playerHandTotalValue = 0;
-    for (let i = 0; i < playerHand.length; i += 1) {
-      playerHandTotalValue += playerHand[i].value;
-      console.log("Player Hand ", playerHandTotalValue);
-    }
+    playerHandTotalValue = calculateHandValue(playerHand);
 
     //no limit to additional cards until higher than 21, you BUST and dealer gets your bet
     //possibility of bust
     if (playerHandTotalValue > 21) {
+      dealerCurrentHandMessage = displayHand("Dealer", dealerHand);
+      playerCurrentHandMessage = displayHand("Player", playerHand);
       dealerMoney += playerBetThisRound;
       gameMode = "start";
-      return `Player BUST! Dealer gets $${playerBetThisRound}`;
+      buttonsContainer.removeChild(hitButton);
+      buttonsContainer.removeChild(standButton);
+      mainButton.style.display = "block";
+      mainButton.innerHTML = "BUST! Start again!";
+      return `${dealerCurrentHandMessage}${playerCurrentHandMessage}Player BUST! Dealer gets $${playerBetThisRound}`;
     }
 
     //if no bust
     if (playerHandTotalValue <= 21) {
-      playerCurrentHandMessage = "Player's hand:<br><br>";
-      for (let i = 0; i < playerHand.length; i += 1) {
-        playerCurrentHandMessage += `${playerHand[i].name} of ${playerHand[i].suit}<br>`;
-      }
-      playerCurrentHandMessage += "<br>";
-      return `${playerCurrentHandMessage}Continue to 'hit' or 'stand'?`;
+      dealerCurrentHandMessage = displayHand("Dealer", dealerHand);
+      playerCurrentHandMessage = displayHand("Player", playerHand);
+      return `${dealerCurrentHandMessage}${playerCurrentHandMessage}Continue to 'h' for 'hit' or 's' for 'stand'?`;
     }
   }
 
   //if player enters 'stand'
   if (gameMode === "stand") {
-    gameMode = "dealer";
-  }
-
-  if (gameMode === "dealer") {
-    dealerHandTotalValue = 0;
-    for (let i = 0; i < dealerHand.length; i += 1) {
-      dealerHandTotalValue += dealerHand[i].value;
-    }
-    // if <=16, dealer have to take another card
-    if (dealerHandTotalValue < 17) {
+    dealerHandTotalValue = calculateHandValue(dealerHand);
+    // if <17, dealer have to take another card until at least 17
+    while (dealerHandTotalValue < 17) {
       dealerHand.push(deck.pop());
-      dealerHandTotalValue = 0;
-      for (let i = 0; i < dealerHand.length; i += 1) {
-        dealerHandTotalValue += dealerHand[i].value;
-      }
-
-      //if dealer takes card and bust...every player still alive win twice their bet
-      if (dealerHandTotalValue > 21) {
-        dealerMoney -= playerBetThisRound * 2;
-        playerMoney += playerBetThisRound * 2;
-        gameMode = "start";
-        return `Dealer takes an extra card and...BUST! Player gets $${playerBetThisRound}`;
-      }
-
-      //calculate player hand value
-      playerHandTotalValue = 0;
-      for (let i = 0; i < playerHand.length; i += 1) {
-        playerHandTotalValue += playerHand[i].value;
-      }
-
-      //compare to see dealer win or player win
-      // after dealer takes card, if dealer >= player...dealer wins!
-      if (dealerHandTotalValue >= playerHandTotalValue) {
-        dealerCurrentHandMessage = "Dealer's hand:<br><br>";
-        for (let i = 0; i < dealerHand.length; i += 1) {
-          dealerCurrentHandMessage += `${dealerHand[i].name} of ${dealerHand[i].suit}<br>`;
-        }
-        dealerCurrentHandMessage += "<br><br>";
-        dealerMoney += playerBetThisRound;
-        gameMode = "start";
-        return `${dealerCurrentHandMessage}Dealer wins! Player loses $${playerBetThisRound}`;
-      }
-      // after dealer takes card, if dealer < player
-      else {
-        dealerCurrentHandMessage = "Dealer's hand:<br><br>";
-        for (let i = 0; i < dealerHand.length; i += 1) {
-          dealerCurrentHandMessage += `${dealerHand[i].name} of ${dealerHand[i].suit}<br>`;
-        }
-        dealerCurrentHandMessage += "<br><br>";
-        dealerMoney -= playerBetThisRound * 2;
-        playerMoney += playerBetThisRound * 2;
-        gameMode = "start";
-        return `${dealerCurrentHandMessage}Player wins! Player wins $${playerBetThisRound}`;
-      }
+      dealerHandTotalValue = calculateHandValue(dealerHand);
     }
-    // if >= 17, dealer stand
-    else {
-      //calculate player hand value
-      playerHandTotalValue = 0;
-      for (let i = 0; i < playerHand.length; i += 1) {
-        playerHandTotalValue += playerHand[i].value;
-      }
 
-      //compare to see dealer win or player win
-      // dealer don't take card, if player > dealer...player wins twice their bet!
-      if (dealerHandTotalValue < playerHandTotalValue) {
-        dealerCurrentHandMessage = "Dealer's hand:<br><br>";
-        for (let i = 0; i < dealerHand.length; i += 1) {
-          dealerCurrentHandMessage += `${dealerHand[i].name} of ${dealerHand[i].suit}<br>`;
-        }
-        dealerCurrentHandMessage += "<br><br>";
-        dealerMoney -= playerBetThisRound * 2;
-        playerMoney += playerBetThisRound * 2;
-        gameMode = "start";
-        return `${dealerCurrentHandMessage}Player wins! Player wins $${playerBetThisRound}`;
-      } else {
-        dealerCurrentHandMessage = "Dealer's hand:<br><br>";
-        for (let i = 0; i < dealerHand.length; i += 1) {
-          dealerCurrentHandMessage += `${dealerHand[i].name} of ${dealerHand[i].suit}<br>`;
-        }
-        dealerCurrentHandMessage += "<br><br>";
-        dealerMoney += playerBetThisRound;
-        gameMode = "start";
-        return `${dealerCurrentHandMessage}Dealer wins! Player loses $${playerBetThisRound}`;
-      }
+    //if dealer takes card and bust...every player still alive win twice their bet
+    if (dealerHandTotalValue > 21) {
+      dealerCurrentHandMessage = displayHand("Dealer", dealerHand);
+      playerCurrentHandMessage = displayHand("Player", playerHand);
+      dealerMoney -= playerBetThisRound * 2;
+      playerMoney += playerBetThisRound * 2;
+      gameMode = "start";
+      mainButton.innerHTML = "Start again!";
+      return `Dealer takes extra card(s) and...<br><br>${dealerCurrentHandMessage}BUST! Player gets $${playerBetThisRound}`;
+    }
+
+    //calculate player hand value
+    playerHandTotalValue = calculateHandValue(playerHand);
+
+    // compare to see dealer win or player win
+    // after dealer takes card/stand, if dealer > player...dealer wins! Else player wins! Else draw!
+    if (dealerHandTotalValue > playerHandTotalValue) {
+      dealerCurrentHandMessage = displayHand("Dealer", dealerHand);
+      playerCurrentHandMessage = displayHand("Player", playerHand);
+      dealerMoney += playerBetThisRound;
+      gameMode = "start";
+      mainButton.innerHTML = "Start again!";
+      return `${dealerCurrentHandMessage}${playerCurrentHandMessage}Dealer wins! Player loses $${playerBetThisRound}`;
+    } else if (dealerHandTotalValue < playerHandTotalValue) {
+      dealerCurrentHandMessage = displayHand("Dealer", dealerHand);
+      playerCurrentHandMessage = displayHand("Player", playerHand);
+      dealerMoney -= playerBetThisRound * 2;
+      playerMoney += playerBetThisRound * 2;
+      gameMode = "start";
+      mainButton.innerHTML = "Start again!";
+      return `${dealerCurrentHandMessage}${playerCurrentHandMessage}Player wins! Player wins $${playerBetThisRound}`;
+    } else {
+      dealerCurrentHandMessage = displayHand("Dealer", dealerHand);
+      playerCurrentHandMessage = displayHand("Player", playerHand);
+      playerMoney += playerBetThisRound;
+      gameMode = "start";
+      mainButton.innerHTML = "Start again!";
+      return `${dealerCurrentHandMessage}${playerCurrentHandMessage}It's a draw!`;
     }
   }
 
-  // A is 1 or 11. IF you have 2 aces, only one of it is 11
   // restart round with new bet
 };
+
+// things to add in
+
+// if got time, generate probability of getting the next card of remaining deck
+// if got time, add in DOM buttons: hit & stand, renaming of single button name based on gameMode
+// add in sound effect
+// add in colours
