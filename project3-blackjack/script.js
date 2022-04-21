@@ -1,7 +1,12 @@
 var deck = [];
 var card = {};
 const values = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
-const suits = ["Spade ♠️", "Club ♣️", "Heart ♥️", "Diamond ♦️"];
+const suits = [
+  "Spade ♠️",
+  "Club ♣️",
+  "<span style='color: red;'>Heart ♥️</span>",
+  "<span style='color: red;'>Diamond ♦️</span>"
+];
 const names = [
   "Ace",
   "2",
@@ -263,7 +268,7 @@ var main = function (input) {
         playerHand[0].name
       } of ${playerHand[0].suit}<br>${playerHand[1].name} of ${
         playerHand[1].suit
-      }<br><br>${probability(deck)}<br>Choose 'h' for 'hit' or 's' for 'stand'`;
+      }<br><br>${probability(deck)}<br>Click 'hit' or 'stand'`;
     }
   }
 
@@ -277,7 +282,7 @@ var main = function (input) {
       mainButton.style.display = "block";
       mainButton.innerHTML = "Revealed! Start again!";
     } else {
-      return "Invalid input! Make sure you type in 'h' or 's' ONLY!";
+      return "Invalid input! Make sure you click 'hit' or 'stand' ONLY!";
     }
   }
 
@@ -304,7 +309,7 @@ var main = function (input) {
       buttonsContainer.removeChild(hitButton);
       buttonsContainer.removeChild(standButton);
       mainButton.style.display = "block";
-      mainButton.innerHTML = "BUST! Start again!";
+      mainButton.innerHTML = "Player BUST! Start again!";
       return `${dealerCurrentHandMessage}${playerCurrentHandMessage}Player BUST! Dealer gets $${playerBetThisRound}`;
     }
 
@@ -312,7 +317,7 @@ var main = function (input) {
     if (playerHandTotalValue <= 21) {
       dealerCurrentHandMessage = displayHand("Dealer", dealerHand);
       playerCurrentHandMessage = displayHand("Player", playerHand);
-      return `${dealerCurrentHandMessage}${playerCurrentHandMessage}Continue to 'h' for 'hit' or 's' for 'stand'?`;
+      return `${dealerCurrentHandMessage}${playerCurrentHandMessage}Continue to 'hit' or 'stand'?`;
     }
   }
 
@@ -333,7 +338,7 @@ var main = function (input) {
       playerMoney += playerBetThisRound * 2;
       gameMode = "start";
       mainButton.innerHTML = "Start again!";
-      return `Dealer takes extra card(s) and...<br><br>${dealerCurrentHandMessage}BUST! Player gets $${playerBetThisRound}`;
+      return `Dealer takes extra card(s) and...<br><br>${dealerCurrentHandMessage}Dealer BUST! Player gets $${playerBetThisRound}`;
     }
 
     //calculate player hand value
@@ -368,10 +373,3 @@ var main = function (input) {
 
   // restart round with new bet
 };
-
-// things to add in
-
-// if got time, generate probability of getting the next card of remaining deck
-// if got time, add in DOM buttons: hit & stand, renaming of single button name based on gameMode
-// add in sound effect
-// add in colours
