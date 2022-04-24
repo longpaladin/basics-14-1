@@ -1,4 +1,4 @@
-//scissors paper stone game complete
+//scissors paper stone game
 var playerWinCount = 0;
 var computerWinCount = 0;
 var player;
