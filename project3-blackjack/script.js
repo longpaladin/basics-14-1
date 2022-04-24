@@ -90,6 +90,7 @@ var calculateHandValue = function (hand) {
   return totalValue;
 };
 
+// cheat code. allows player to know what 2nd card the computer is holding on to
 var probability = function (remainingDeck) {
   var cardsCounter = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   for (let i = 0; i < remainingDeck.length; i += 1) {
